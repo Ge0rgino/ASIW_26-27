@@ -1,5 +1,10 @@
 using Cars.Infrastructure;
+using Cars.Application.Cars;
+using Cars.Application.Common.Behaviors;
+using Cars.API.Middleware;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +29,20 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(GetCarsList.Handler).Assembly);
+});
+
+builder.Services.AddValidatorsFromAssemblyContaining<Create.CommandValidator>();
+
+builder.Services.AddTransient(
+    typeof(IPipelineBehavior<,>),
+    typeof(ValidationBehavior<,>));
+
 var app = builder.Build();
+
+app.UseMiddleware<ApiExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
