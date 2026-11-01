@@ -10,17 +10,18 @@ import NotFoundPage from '../src/pages/NotFoundPage';
 export default function App() {
   return (
     <Routes>
-      <Route element={<RootLayout />} />
+      <Route element={<RootLayout />}>
         <Route index element={<HomePage />} />
 
-        <Route path="cars">
-          <Route index element={<CarsPage />} />
-          <Route path="new" element={<CreateCarPage />} />
-          <Route path=":id" element={<CarDetailsPage />} />
-          <Route path=":id/edit" element={<EditCarPage />} />
-        </Route>
+          <Route path="cars">
+            <Route index element={<CarsPage />} />
+            <Route path="new" element={<CreateCarPage />} />
+            <Route path=":id" element={<CarDetailsPage />} />
+            <Route path=":id/edit" element={<EditCarPage />} />
+          </Route>
 
-        <Route path="*" element={<NotFoundPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
     </Routes>
   );
 }
