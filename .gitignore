@@ -431,3 +431,4 @@ FodyWeavers.xsd
 cars.db
 cars.db-shm
 cars.db-wal
+cars-client/db.json
