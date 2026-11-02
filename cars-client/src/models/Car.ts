@@ -4,7 +4,7 @@ export interface Car {
     model: string;
     doorsNumber: number;
     luggageCapacity: number;
-    enigneCapacity: number;
+    engineCapacity: number;
     fuelType: number;
     productionDate: string;
     averageFuelConsumption: number;

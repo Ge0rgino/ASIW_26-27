@@ -13,16 +13,101 @@
       "bodyType": 1
     },
     {
-      "id": "2",
-      "brand": "Skoda",
-      "model": "Octavia",
-      "doorsNumber": 5,
-      "luggageCapacity": 600,
-      "engineCapacity": 1500,
-      "fuelType": 1,
-      "productionDate": "2021-03-15",
-      "averageFuelConsumption": 6.8,
-      "bodyType": 1
+      "brand": "d",
+      "model": "d",
+      "doorsNumber": 0,
+      "luggageCapacity": 0,
+      "engineCapacity": 0,
+      "fuelType": 0,
+      "productionDate": "",
+      "averageFuelConsumption": 0,
+      "bodyType": 0,
+      "id": "WAhTYe8Xr9Y"
+    },
+    {
+      "brand": "",
+      "model": "",
+      "doorsNumber": 2,
+      "luggageCapacity": -1,
+      "engineCapacity": 0,
+      "fuelType": 0,
+      "productionDate": "",
+      "averageFuelConsumption": 0,
+      "bodyType": 0,
+      "id": "TQ2MFLyrg6Y"
+    },
+    {
+      "brand": "d",
+      "model": "d",
+      "doorsNumber": 0,
+      "luggageCapacity": 0,
+      "engineCapacity": 0,
+      "fuelType": 0,
+      "productionDate": "",
+      "averageFuelConsumption": 0,
+      "bodyType": 0,
+      "id": "pfFVvQVSW7g"
+    },
+    {
+      "brand": "d",
+      "model": "d",
+      "doorsNumber": 0,
+      "luggageCapacity": 0,
+      "engineCapacity": 0,
+      "fuelType": 0,
+      "productionDate": "",
+      "averageFuelConsumption": 0,
+      "bodyType": 0,
+      "id": "70faGE3FJU4"
+    },
+    {
+      "brand": "",
+      "model": "",
+      "doorsNumber": 0,
+      "luggageCapacity": 0,
+      "engineCapacity": 0,
+      "fuelType": 0,
+      "productionDate": "",
+      "averageFuelConsumption": 0,
+      "bodyType": 0,
+      "id": "8dg8GiexUhk"
+    },
+    {
+      "brand": "d",
+      "model": "d",
+      "doorsNumber": 0,
+      "luggageCapacity": 0,
+      "engineCapacity": 0,
+      "fuelType": 0,
+      "productionDate": "d",
+      "averageFuelConsumption": 0,
+      "bodyType": 0,
+      "id": "1yXhcVm9RSA"
+    },
+    {
+      "brand": "",
+      "model": "",
+      "doorsNumber": 0,
+      "luggageCapacity": 0,
+      "engineCapacity": 0,
+      "fuelType": 0,
+      "productionDate": "",
+      "averageFuelConsumption": 0,
+      "bodyType": 0,
+      "id": "2W32g56h2_4"
+    },
+    {
+      "brand": "",
+      "model": "",
+      "doorsNumber": 0,
+      "luggageCapacity": 0,
+      "engineCapacity": 0,
+      "fuelType": 0,
+      "productionDate": "",
+      "averageFuelConsumption": 0,
+      "bodyType": 0,
+      "id": "v6h8b5HO1FA"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

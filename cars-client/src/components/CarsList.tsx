@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import type { Car } from "../models/Car";
 import { getCars } from "../services/carService"
 
@@ -57,18 +58,33 @@ export default function CarsList() {
     }
 
     return (
-        <div className="flex flex-row flex-wrap">
+        <div className="grid grid-cols-7 gap-4 p-4 w-full">
             {cars.map((car) => (
-                <div key={car.id} className="flex-1 m-2 bg-orange-100 min-h-30 flex-col justify-center p-7 rounded-xs shadow-xs">
-                    <h2 className="font-bold text-xl">
-                        {car.brand} {car.model}
-                    </h2>
-                    <p>
-                        Data produkcji: {car.productionDate}
-                    </p>
-                    <p>
-                        Rodzaj paliwa: {car.fuelType}
-                    </p>
+                <div key={car.id} className="flex flex-row justify-between bg-orange-100 h-52 p-5 rounded-xl shadow-xs shadow-amber-100 border-orange-200">
+                        <div className="space-y-1">
+                            <h2 className="font-bold text-xl">
+                                {car.brand} {car.model}
+                            </h2>
+                            <p>
+                                Data produkcji: {car.productionDate}
+                            </p>
+                            <p>
+                                Rodzaj paliwa: {car.fuelType}
+                            </p>
+                            <Link 
+                                to={`/cars/${car.id}`}
+                                className="bg-blue-600  text-white p-0.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition self-start"
+                            >
+                                Szczegóły
+                            </Link>
+
+                            <Link 
+                                to={`/cars/${car.id}/edit`}
+                                className="bg-amber-400  text-white p-0.5 rounded-lg text-sm font-medium hover:bg-amber-700 transition self-start m-1"
+                            >
+                                Edytuj
+                            </Link>
+                        </div>
                 </div>
             ))}
         </div>
