@@ -27,7 +27,7 @@ public class Car
     public int LuggageCapacity { get; set; }
     public int EngineCapacity { get; set; }
     public FuelType FuelType { get; set; }
-    public DateTime ProductionDate { get; set; }
+    public DateOnly ProductionDate { get; set; }
     public double AverageFuelConsumption { get; set; }
     public BodyType BodyType { get; set; }
 }

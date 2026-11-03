@@ -103,7 +103,7 @@ export default function NewCarForm() {
                 Data produkcji
                </label>
                 <input
-                    type="string"
+                    type="date"
                     value={productionDate}
                     onChange={(e) => setProductionDate(e.target.value)}
                     placeholder="Data produkcji"

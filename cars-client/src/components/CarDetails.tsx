@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import type { Car } from "../models/Car";
 import { getCarById, deleteCar } from "../services/carService"
+import axios from "axios";
 
 export default function CarDetails() {
     const {id} = useParams<{ id: string }>();
@@ -23,7 +24,9 @@ export default function CarDetails() {
                 const data = await getCarById(id!, controller.signal);
                 setCar(data);
             } catch (caughtError) {
-                if (controller.signal.aborted) return;
+                if (axios.isCancel(caughtError)) {
+                    return;
+                }
 
                 if(caughtError instanceof Error) {
                     setError(`Nie udało się pobrać szczegółów: ${caughtError.message}`);
