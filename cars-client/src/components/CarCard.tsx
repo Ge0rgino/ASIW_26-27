@@ -37,8 +37,8 @@ export default function CarCard({car}: CarCardProps) {
                     type="button"
                     className={
                         isFavorite
-                            ? 'bg-yellow-400 text-white rounded-xl shadow-xs p-1 m-2 transition'
-                            : 'bg-gray-50 rounded-xl shadow-xs p-1 m-2 transition hover:bg-yellow-200'
+                            ? 'bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-4 py-2 m-2 rounded-xl shadow-xs transition-colors'
+                            : 'bg-gray-50 hover:bg-gray-200 text-gray-800 font-medium px-4 py-2 m-2 rounded-xl shadow-xs transition-colors'
                     }
                     onClick={() =>
                         toggleFavorite(car.id)
