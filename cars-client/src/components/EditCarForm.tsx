@@ -1,6 +1,7 @@
 import { useState, useEffect, type SubmitEvent } from "react";
 import { useParams, useNavigate } from "react-router";
 import { getCarById, updateCar } from "../services/carService";
+import axios from "axios";
 
 export default function EditCarForm() {
     const { id } = useParams<{ id: string }>();
@@ -38,6 +39,9 @@ export default function EditCarForm() {
                 setBodyType(car.bodyType);
 
             } catch (caughtError) {
+                if(axios.isCancel(caughtError)) {
+                    return;
+                }
                 if(caughtError instanceof Error) {
                     setError(`Nie udało się pobrać danych do formularza: ${caughtError.message}`);
                 } else {

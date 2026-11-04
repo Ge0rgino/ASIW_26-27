@@ -19,7 +19,7 @@ public static class Seed
                 LuggageCapacity = 570,
                 EngineCapacity = 2488,
                 FuelType = FuelType.Hybrid,
-                ProductionDate = DateTime.UtcNow.AddMonths(-6),
+                ProductionDate = DateOnly.FromDateTime(DateTime.UtcNow).AddMonths(-6),
                 AverageFuelConsumption = 1.5,
                 BodyType = BodyType.SUV
             },
@@ -31,7 +31,7 @@ public static class Seed
                 LuggageCapacity = 470,
                 EngineCapacity = 1798,
                 FuelType = FuelType.Petrol,
-                ProductionDate = DateTime.UtcNow.AddYears(-1),
+                ProductionDate = DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-1),
                 AverageFuelConsumption = 6.5,
                 BodyType = BodyType.Sedan
             },
@@ -43,7 +43,7 @@ public static class Seed
                 LuggageCapacity = 380,
                 EngineCapacity = 1395,
                 FuelType = FuelType.Diesel,
-                ProductionDate = DateTime.UtcNow.AddYears(-2),
+                ProductionDate = DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-2),
                 AverageFuelConsumption = 4.5,
                 BodyType = BodyType.Hatchback
             },

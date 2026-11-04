@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import type { Car } from "../models/Car";
 import { getCarById, deleteCar } from "../services/carService"
+import axios from "axios";
+import { useCarUiStore } from "../store/useCarUiStore";
 
 export default function CarDetails() {
     const {id} = useParams<{ id: string }>();
     const [car, setCar] = useState<Car | null>();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const removeFavorite  = useCarUiStore((state) => state.removeFavorite);
 
     const navigate = useNavigate();
 
@@ -23,7 +27,9 @@ export default function CarDetails() {
                 const data = await getCarById(id!, controller.signal);
                 setCar(data);
             } catch (caughtError) {
-                if (controller.signal.aborted) return;
+                if (axios.isCancel(caughtError)) {
+                    return;
+                }
 
                 if(caughtError instanceof Error) {
                     setError(`Nie udało się pobrać szczegółów: ${caughtError.message}`);
@@ -44,6 +50,16 @@ export default function CarDetails() {
         }
     }, [id]);
 
+    const isFavorite = useCarUiStore((state) =>
+        car ? state.favoriteCarIds.includes(car.id) : false
+    );
+
+    const toggleFavorite = useCarUiStore(
+        (state) =>
+            state.toggleFavorite,
+    );
+   
+
     if (isLoading) {
         return <p className="p-4 text-center">Ładowanie szczegółów...</p>
     }
@@ -61,6 +77,7 @@ export default function CarDetails() {
 
         try {
             await deleteCar(car.id);
+            removeFavorite(car.id);
             navigate("/cars");
         } catch {
             setError("Nie udało się usunąć samochodu.");
@@ -73,6 +90,23 @@ export default function CarDetails() {
                 <h1 className="text-2xl font-bold text-gray-800 border-b pb-2">
                     {car.brand} {car.model}
                 </h1>
+
+                <button
+                    type="button"
+                    className={
+                        isFavorite
+                            ? 'bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-4 py-2 m-2 rounded-xl shadow-xs transition-colors'
+                            : 'bg-gray-50 hover:bg-gray-200 text-gray-800 font-medium px-4 py-2 m-2 rounded-xl shadow-xs transition-colors'
+                    }
+                    onClick={() =>
+                        toggleFavorite(car.id)
+                    }
+                >
+                    {isFavorite
+                        ? 'Usuń z ulubionych'
+                        : 'Dodaj do ulubionych'
+                    }
+                </button>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-700">
                     <div><span className="font-semibold">Liczba drzwi: </span> {car.doorsNumber}</div>
