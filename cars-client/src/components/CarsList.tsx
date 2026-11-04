@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import CarCard from "./CarCard";
 import type { Car } from "../models/Car";
 import { getCars } from "../services/carService"
 import axios from "axios";
+import SearchBar from "./SearchBar";
 
 export default function CarsList() {
     const [cars, setCars] = useState<Car[]>([]);
@@ -72,44 +73,10 @@ export default function CarsList() {
 
     return (
         <div className="flex flex-col w-full p-4">
-            <div className="mb-6 flex justify-center">
-                <input
-                    type="text"
-                    placeholder="Szukaj po marce lub modelu"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full max-w-md p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
-
-                    </input>
-            </div>
+                <SearchBar value={searchQuery} onChange={setSearchQuery} />
             <div className="grid grid-cols-7 gap-4 p-4 w-full">
                 {filteredCars.map((car) => (
-                    <div key={car.id} className="flex flex-row justify-between bg-orange-100 h-52 p-5 rounded-xl shadow-xs shadow-amber-100 border-orange-200">
-                            <div className="space-y-1">
-                                <h2 className="font-bold text-xl">
-                                    {car.brand} {car.model}
-                                </h2>
-                                <p>
-                                    Data produkcji: {car.productionDate}
-                                </p>
-                                <p>
-                                    Rodzaj paliwa: {car.fuelType}
-                                </p>
-                                <Link 
-                                    to={`/cars/${car.id}`}
-                                    className="bg-blue-600  text-white p-0.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition self-start"
-                                >
-                                    Szczegóły
-                                </Link>
-
-                                <Link 
-                                    to={`/cars/${car.id}/edit`}
-                                    className="bg-amber-400  text-white p-0.5 rounded-lg text-sm font-medium hover:bg-amber-700 transition self-start m-1"
-                                >
-                                    Edytuj
-                                </Link>
-                            </div>
-                    </div>
+                    <CarCard key={car.id} car={car}/>
                 ))}
             </div>
         </div>
