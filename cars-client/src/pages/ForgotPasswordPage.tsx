@@ -22,9 +22,7 @@ export default function ForgotPasswordPage() {
 
       const result = await forgotPassword(email);
       setMessage(result);
-      setUserName("");
       setEmail("");
-      setPassword("");
     } catch (caughtError) {
       if (caughtError instanceof Error) {
         setError(caughtError.message);
