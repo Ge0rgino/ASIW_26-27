@@ -1,146 +1,177 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router";
-import type { Car } from "../models/Car";
-import { getCarById, deleteCar } from "../services/carService"
 import axios from "axios";
+import type { Car } from "../models/Car";
+import { getCarById, deleteCar } from "../services/carService";
+import { useAuthStore } from "../store/useAuthStore";
 import { useCarUiStore } from "../store/useCarUiStore";
 
 export default function CarDetails() {
-    const {id} = useParams<{ id: string }>();
-    const [car, setCar] = useState<Car | null>();
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const { id } = useParams<{ id: string }>();
+  const [car, setCar] = useState<Car | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    const removeFavorite  = useCarUiStore((state) => state.removeFavorite);
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const favoriteCarIdsByUser = useCarUiStore(
+    (state) => state.favoriteCarIdsByUser,
+  );
+  const toggleFavorite = useCarUiStore((state) => state.toggleFavorite);
+  const removeFavorite = useCarUiStore((state) => state.removeFavorite);
 
-    useEffect(() => {
-        if (!id) return;
+  const favoriteCarIds = user ? (favoriteCarIdsByUser[user.id] ?? []) : [];
+  const isFavorite = car ? favoriteCarIds.includes(car.id) : false;
+  const isAdmin = user?.roles.includes("Admin") ?? false;
 
-        const controller = new AbortController();
+  useEffect(() => {
+    if (!id) return;
 
-        async function loadCar() {
-            try {
-                setIsLoading(true);
-                setError(null);
-                const data = await getCarById(id!, controller.signal);
-                setCar(data);
-            } catch (caughtError) {
-                if (axios.isCancel(caughtError)) {
-                    return;
-                }
+    const controller = new AbortController();
 
-                if(caughtError instanceof Error) {
-                    setError(`Nie udało się pobrać szczegółów: ${caughtError.message}`);
-                } else {
-                    setError("Nie udało się pobrać szczegółów samochodu.");
-                }
-            } finally {
-                if (!controller.signal.aborted) {
-                    setIsLoading(false);
-                }
-            }
+    async function loadCar() {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await getCarById(id!, controller.signal);
+        setCar(data);
+      } catch (caughtError) {
+        if (axios.isCancel(caughtError)) {
+          return;
         }
 
-        loadCar();
-
-        return () => {
-            controller.abort();
+        if (caughtError instanceof Error) {
+          setError(`Nie udało się pobrać szczegółów: ${caughtError.message}`);
+        } else {
+          setError("Nie udało się pobrać szczegółów samochodu.");
         }
-    }, [id]);
-
-    const isFavorite = useCarUiStore((state) =>
-        car ? state.favoriteCarIds.includes(car.id) : false
-    );
-
-    const toggleFavorite = useCarUiStore(
-        (state) =>
-            state.toggleFavorite,
-    );
-   
-
-    if (isLoading) {
-        return <p className="p-4 text-center">Ładowanie szczegółów...</p>
-    }
-
-    if (error || !car) {
-        return <p className="p-4 text-red-500 text-center">{error || "Nie znaleziono samochodu."}</p>
-    }
-
-    async function handleDelete() {
-        if (!car) return;
-
-        const confirmed = window.confirm(`Czy na pewno cchesz usunąć auto ${car.brand} ${car.model}?`);
-
-        if(!confirmed) return;
-
-        try {
-            await deleteCar(car.id);
-            removeFavorite(car.id);
-            navigate("/cars");
-        } catch {
-            setError("Nie udało się usunąć samochodu.");
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
         }
+      }
     }
 
+    loadCar();
+
+    return () => {
+      controller.abort();
+    };
+  }, [id]);
+
+  if (isLoading) {
+    return <p className="p-4 text-center">Ładowanie szczegółów...</p>;
+  }
+
+  if (error || !car) {
     return (
-        <div className="flex justify-center w-full p-5">
-            <div className="w-full md:w-1/2 max-w-2xl bg-gray-100 p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col gap-5">
-                <h1 className="text-2xl font-bold text-gray-800 border-b pb-2">
-                    {car.brand} {car.model}
-                </h1>
+      <p className="p-4 text-red-500 text-center">
+        {error || "Nie znaleziono samochodu."}
+      </p>
+    );
+  }
 
-                <button
-                    type="button"
-                    className={
-                        isFavorite
-                            ? 'bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-4 py-2 m-2 rounded-xl shadow-xs transition-colors'
-                            : 'bg-gray-50 hover:bg-gray-200 text-gray-800 font-medium px-4 py-2 m-2 rounded-xl shadow-xs transition-colors'
-                    }
-                    onClick={() =>
-                        toggleFavorite(car.id)
-                    }
-                >
-                    {isFavorite
-                        ? 'Usuń z ulubionych'
-                        : 'Dodaj do ulubionych'
-                    }
-                </button>
+  async function handleDelete() {
+    if (!car) return;
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-700">
-                    <div><span className="font-semibold">Liczba drzwi: </span> {car.doorsNumber}</div>
-                    <div><span className="font-semibold">Pojemność bagażnika: </span> {car.luggageCapacity}</div>
-                    <div><span className="font-semibold">Pojemność silnika: </span> {car.engineCapacity}</div>
-                    <div><span className="font-semibold">Typ paliwa: </span> {car.fuelType}</div>
-                    <div><span className="font-semibold">Data produkcji: </span> {car.productionDate}</div>
-                    <div><span className="font-semibold">Średnie spalanie: </span> {car.averageFuelConsumption}</div>
-                    <div><span className="font-semibold">Typ nadwozia: </span> {car.bodyType}</div>
-                </div>
-            
-                <div className="flex gap-3 mt-4 pt-3 border-t justify-end">
-                    <Link
-                        to="/cars"
-                        className="bg-gray-200 text-gray-800 px-4 py-2 rounded-xl hover:bg-gray-300 font-medium transition"
-                    >
-                        Powrót do listy
-                    </Link>
+    const confirmed = window.confirm(
+      `Czy na pewno chcesz usunąć auto ${car.brand} ${car.model}?`,
+    );
 
-                    <Link
-                        to={`/cars/${car.id}/edit`}
-                        className="bg-amber-500 text-gray-800 px-4 py-2 rounded-xl hover:bg-gray-600 font-medium transition"
-                    >
-                        Wyedytuj
-                    </Link>
+    if (!confirmed) return;
 
-                    <button
-                        onClick={handleDelete}
-                        className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 font-bold transition text-sm">
-                        Usuń
-                    </button>
-                </div>
-            </div>
+    try {
+      await deleteCar(car.id);
+      if (user) {
+        removeFavorite(user.id, car.id);
+      }
+      navigate("/cars");
+    } catch {
+      setError("Nie udało się usunąć samochodu.");
+    }
+  }
 
+  return (
+    <div className="flex justify-center w-full p-5">
+      <div className="w-full md:w-1/2 max-w-2xl bg-gray-100 p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col gap-5">
+        <h1 className="text-2xl font-bold text-gray-800 border-b pb-2">
+          {car.brand} {car.model}
+        </h1>
+
+        <button
+          type="button"
+          className={
+            isFavorite
+              ? "bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-4 py-2 m-2 rounded-xl shadow-xs transition-colors"
+              : "bg-gray-50 hover:bg-gray-200 text-gray-800 font-medium px-4 py-2 m-2 rounded-xl shadow-xs transition-colors"
+          }
+          onClick={() => {
+            if (user) {
+              toggleFavorite(user.id, car.id);
+            }
+          }}
+        >
+          {isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+        </button>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-700">
+          <div>
+            <span className="font-semibold">Liczba drzwi: </span>
+            {car.doorsNumber}
+          </div>
+          <div>
+            <span className="font-semibold">Pojemność bagażnika: </span>
+            {car.luggageCapacity}
+          </div>
+          <div>
+            <span className="font-semibold">Pojemność silnika: </span>
+            {car.engineCapacity}
+          </div>
+          <div>
+            <span className="font-semibold">Typ paliwa: </span>
+            {car.fuelType}
+          </div>
+          <div>
+            <span className="font-semibold">Data produkcji: </span>
+            {car.productionDate}
+          </div>
+          <div>
+            <span className="font-semibold">Średnie spalanie: </span>
+            {car.averageFuelConsumption}
+          </div>
+          <div>
+            <span className="font-semibold">Typ nadwozia: </span>
+            {car.bodyType}
+          </div>
         </div>
-    )
+
+        <div className="flex gap-3 mt-4 pt-3 border-t justify-end">
+          <Link
+            to="/cars"
+            className="bg-gray-200 text-gray-800 px-4 py-2 rounded-xl hover:bg-gray-300 font-medium transition"
+          >
+            Powrót do listy
+          </Link>
+
+          <Link
+            to={`/cars/${car.id}/edit`}
+            className="bg-amber-500 text-gray-800 px-4 py-2 rounded-xl hover:bg-gray-600 font-medium transition"
+          >
+            Wyedytuj
+          </Link>
+
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 font-bold transition text-sm"
+            >
+              Usuń
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
